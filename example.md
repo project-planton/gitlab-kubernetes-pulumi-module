@@ -19,7 +19,7 @@ spec:
 
 ---
 
-# Example 2: GitLab with Ingress Enabled
+# Example 2: GitLab with Ingress and Custom Hostname
 
 ```yaml
 apiVersion: code2cloud.planton.cloud/v1
@@ -64,7 +64,33 @@ spec:
 
 ---
 
-# Example 4: Minimal GitLab Deployment (Empty Spec)
+# Example 4: GitLab with Environment Variables
+
+```yaml
+apiVersion: code2cloud.planton.cloud/v1
+kind: GitlabKubernetes
+metadata:
+  name: gitlab-env-vars
+spec:
+  kubernetesClusterCredentialId: my-k8s-credentials
+  container:
+    env:
+      variables:
+        GITLAB_OMNIBUS_CONFIG: |
+          external_url 'http://gitlab.example.com'
+          gitlab_rails['gitlab_shell_ssh_port'] = 2222
+    resources:
+      requests:
+        cpu: 250m
+        memory: 512Mi
+      limits:
+        cpu: 1
+        memory: 1Gi
+```
+
+---
+
+# Example 5: Minimal GitLab Deployment (Empty Spec)
 
 ```yaml
 apiVersion: code2cloud.planton.cloud/v1

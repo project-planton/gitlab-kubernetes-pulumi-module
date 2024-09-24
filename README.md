@@ -1,31 +1,30 @@
 # GitLab Kubernetes Pulumi Module
-
 ## Key Features
 
-- **Declarative Deployment**: The module leverages Planton Cloud’s unified API structure to allow users to specify their GitLab configuration declaratively. This ensures consistency in deployments across multiple environments.
+- **Declarative Deployment**: The module uses a declarative YAML-based configuration to define all aspects of the GitLab deployment. Users specify the `GitlabKubernetes` API resource, and the module handles the provisioning automatically.
 
-- **Kubernetes Native Integration**: The module is tightly integrated with Kubernetes, provisioning namespaces, services, and ingress resources. This ensures that all necessary components for GitLab are correctly set up within your Kubernetes cluster.
+- **Kubernetes Native**: The module is tightly integrated with Kubernetes, automating the creation of namespaces, services, and containers required for running GitLab. It sets up these resources based on the provided configuration, ensuring that GitLab is deployed consistently across environments.
 
-- **Customizable Resource Management**: Users can define container resource requests and limits (CPU and memory) for the GitLab instance. This provides granular control over resource allocation, allowing GitLab to be tailored to different performance and resource consumption requirements.
+- **Resource Customization**: Users can configure CPU and memory resource requests and limits for GitLab, ensuring that the containerized GitLab deployment is optimized for their specific performance and resource consumption needs.
 
-- **Ingress Support**: The module provides the option to configure ingress, enabling external access to GitLab through custom hostnames and TLS certificates. This ensures that the GitLab instance can be securely accessed from outside the cluster if required.
+- **Ingress Support**: The module includes optional ingress support, allowing GitLab to be exposed to external traffic. Users can specify custom hostnames and enable TLS for secure external access to the GitLab instance.
 
-- **Port-Forwarding for Secure Access**: In cases where ingress is disabled for security reasons, the module offers port-forwarding commands, allowing developers to access the GitLab instance from their local machine. This feature is particularly useful for secure, internal-only deployments of GitLab.
+- **Port-Forwarding for Secure Access**: When ingress is disabled, the module provides port-forwarding commands that enable secure local access to GitLab. This allows developers to interact with the GitLab UI from their local machine without exposing it to the public internet.
 
-- **Seamless Pulumi Integration**: The module is fully integrated with Pulumi, allowing infrastructure to be managed as code. It handles the lifecycle of the GitLab deployment, ensuring that changes to the API resource are automatically reflected in the infrastructure.
+- **Pulumi-Driven Infrastructure Management**: Built using Pulumi’s Go SDK, this module automates the lifecycle of GitLab infrastructure within Kubernetes. The integration with Pulumi ensures that changes to the API resource are automatically reflected in the Kubernetes infrastructure, simplifying updates and scaling operations.
 
-- **Automated Namespace Management**: The module creates or reuses Kubernetes namespaces for GitLab, ensuring that each instance is properly isolated from other workloads within the cluster.
+- **Namespace Isolation**: The module creates or reuses a Kubernetes namespace for GitLab, ensuring that the deployment is isolated from other workloads running within the cluster.
 
-- **Outputs for Monitoring and Access**: The module captures important details about the deployment, including:
-  - The namespace where GitLab is deployed.
-  - The Kubernetes service name used to expose GitLab.
-  - Commands for port-forwarding access to GitLab when ingress is disabled.
-  - Kubernetes internal and external endpoints for accessing GitLab.
-  - Ingress endpoints for public or internal access, if ingress is enabled.
+- **Comprehensive Output Management**: After provisioning, the module provides essential information such as:
+  - The Kubernetes namespace where GitLab is deployed.
+  - The Kubernetes service name that exposes GitLab within the cluster.
+  - Commands for setting up port-forwarding to access GitLab locally.
+  - Internal and external endpoints for accessing GitLab.
+  - Ingress endpoint (if ingress is enabled) for external access to GitLab.
 
 ## Usage
 
-To deploy GitLab using this module, create a `GitlabKubernetes` YAML file that defines the desired configuration. Once the YAML file is prepared, you can deploy the GitLab instance using the following command:
+To deploy the `gitlab-kubernetes-pulumi-module`, create a `GitlabKubernetes` YAML file that defines the desired configuration for GitLab. Once the YAML is prepared, the following command can be used to apply the configuration and deploy the GitLab instance in your Kubernetes cluster:
 
 ```bash
 planton pulumi up --stack-input <api-resource.yaml>
@@ -35,33 +34,33 @@ Refer to the **Examples** section for detailed usage instructions.
 
 ## Pulumi Integration
 
-This module is built using Pulumi's Go SDK, providing deep integration with Kubernetes. The module processes the `GitlabKubernetes` API resource and provisions the necessary Kubernetes components based on the declarative specification provided in the YAML file. Pulumi ensures that changes to the API resource are automatically applied to the infrastructure, simplifying updates and scaling operations.
+The module is built on top of Pulumi’s Go SDK, providing deep integration with Kubernetes. It processes the `GitlabKubernetes` API resource and translates it into the necessary Kubernetes resources, such as services, namespaces, and ingress configurations. Pulumi manages the lifecycle of the resources, ensuring that the GitLab deployment can be easily updated, scaled, or removed by modifying the API resource YAML file.
 
 ### Key Pulumi Components
 
-1. **Kubernetes Provider**: The module sets up the Kubernetes provider using the `kubernetes_cluster_credential_id` provided in the API resource, ensuring that all resources are created within the correct cluster.
+1. **Kubernetes Provider**: The module configures the Kubernetes provider using the `kubernetes_cluster_credential_id` provided in the API resource, ensuring that all resources are deployed in the correct Kubernetes cluster.
 
-2. **Namespace Management**: A Kubernetes namespace is automatically created or reused, based on the `metadata.name` field, isolating the GitLab resources from other workloads within the cluster.
+2. **Namespace Management**: The module creates a Kubernetes namespace for the GitLab deployment or reuses an existing namespace if specified, providing isolation for GitLab from other resources in the cluster.
 
-3. **Kubernetes Services**: The module creates Kubernetes services that expose GitLab, either within the cluster or externally, based on the provided configuration.
+3. **Kubernetes Services**: The module provisions a Kubernetes service to expose the GitLab instance either within the cluster or externally, depending on the configuration.
 
-4. **Ingress Configuration**: If enabled, ingress is set up to expose GitLab to external traffic. The module supports defining custom hostnames and TLS certificates for secure access.
+4. **Ingress Configuration**: If ingress is enabled, the module configures ingress resources to expose GitLab to external traffic. This includes support for custom hostnames and TLS certificates to secure access.
 
-5. **Port-Forwarding**: For cases where ingress is disabled, the module generates port-forwarding commands to allow secure local access to GitLab via `kubectl`. This ensures developers can interact with GitLab without exposing it to external networks.
+5. **Port-Forwarding**: For cases where ingress is disabled, the module outputs port-forwarding commands, allowing developers to access the GitLab instance locally using `kubectl`.
 
-6. **Resource Requests and Limits**: Users can define resource requests and limits for GitLab’s container, controlling the CPU and memory allocation. This ensures that GitLab operates efficiently within the available cluster resources.
+6. **Resource Management**: The module allows developers to specify resource requests and limits for GitLab, ensuring that the deployment is appropriately sized for the workload.
 
-7. **Output Management**: After deployment, the module exports key details of the infrastructure, including:
+7. **Output Management**: After the deployment, the module exports critical information such as:
    - The namespace where GitLab is deployed.
-   - The service name used to access GitLab within the Kubernetes cluster.
-   - Port-forwarding commands for accessing GitLab locally when ingress is disabled.
+   - The service name for accessing GitLab within the Kubernetes cluster.
+   - Port-forwarding commands to access GitLab when ingress is disabled.
    - Internal and external endpoints for accessing GitLab.
-   - Ingress endpoints (if enabled) for accessing GitLab from outside the cluster.
+   - Ingress endpoint (if enabled) for external access to GitLab.
 
 ## Status and Monitoring
 
-All outputs from the Pulumi deployment are stored in the `status.stackOutputs` field. These outputs provide essential information for monitoring and accessing the GitLab instance, including service names, port-forwarding commands, and ingress endpoints. This ensures that all critical details about the deployment are easily accessible for ongoing management.
+The outputs from the Pulumi deployment are captured in the `status.stackOutputs` field. These outputs include details about the Kubernetes service, ingress endpoints, and port-forwarding commands. This information provides an easy way for administrators and developers to monitor the status of the GitLab deployment and access critical information for managing the instance.
 
 ## Conclusion
 
-The `gitlab-kubernetes-pulumi-module` offers a streamlined and powerful way to deploy GitLab in Kubernetes clusters. By adopting a declarative approach and leveraging Pulumi’s infrastructure-as-code capabilities, this module simplifies the provisioning, management, and scaling of GitLab. Whether for small or large-scale deployments, this module ensures that GitLab is deployed consistently, securely, and efficiently across different environments.
+The `gitlab-kubernetes-pulumi-module` simplifies the process of deploying and managing GitLab within Kubernetes clusters. By leveraging Planton Cloud's unified API structure and Pulumi's infrastructure-as-code capabilities, the module ensures that GitLab is consistently deployed across different environments. With built-in support for resource customization, ingress configuration, and secure access options, this module offers flexibility and control for deploying GitLab in both development and production environments.
