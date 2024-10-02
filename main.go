@@ -1,7 +1,7 @@
 package main
 
 import (
-	gitlabkubernetesv1 "buf.build/gen/go/plantoncloud/project-planton/protocolbuffers/go/project/planton/apis/provider/kubernetes/gitlabkubernetes/v1"
+	gitlabkubernetesv1 "buf.build/gen/go/plantoncloud/project-planton/protocolbuffers/go/project/planton/provider/kubernetes/gitlabkubernetes/v1"
 	"github.com/pkg/errors"
 	"github.com/plantoncloud/gitlab-kubernetes-pulumi-module/pkg"
 	"github.com/plantoncloud/pulumi-module-golang-commons/pkg/stackinput"
